@@ -1,0 +1,157 @@
+/ (root)
+├─ apps
+│ ├─ api
+│ │ ├─ src
+│ │ │ ├─ index.ts
+│ │ │ ├─ config.ts
+│ │ │ ├─ db.ts
+│ │ │ ├─ auth
+│ │ │ │ ├─ google.ts
+│ │ │ │ └─ microsoft.ts
+│ │ │ ├─ routes
+│ │ │ │ ├─ links.ts
+│ │ │ │ ├─ availability.ts
+│ │ │ │ ├─ book.ts
+│ │ │ │ └─ webhooks.ts
+│ │ │ ├─ services
+│ │ │ │ ├─ freebusy.ts
+│ │ │ │ ├─ slots.ts
+│ │ │ │ └─ booking.ts
+│ │ │ ├─ utils
+│ │ │ │ ├─ jwt.ts
+│ │ │ │ ├─ time.ts
+│ │ │ │ └─ ics.ts
+│ │ │ └─ types.ts
+│ │ ├─ prisma
+│ │ │ └─ schema.prisma
+│ │ ├─ package.json
+│ │ ├─ tsconfig.json
+│ │ └─ .env.example
+│ └─ web
+│ ├─ public
+│ │ └─ index.html
+│ ├─ src
+│ │ └─ main.ts
+│ ├─ package.json
+│ └─ tsconfig.json
+├─ package.json
+├─ pnpm-workspace.yaml
+└─ README.md
+
+
+---
+
+## ⚙️ Environment Setup
+
+Copy `apps/api/.env.example` → `apps/api/.env`:
+
+
+App
+
+PORT=4000
+APP_BASE_URL=https://oneclicktobook.me
+WEB_BASE_URL=https://oneclicktobook.me
+
+JWT
+
+JWT_SECRET=change-me
+
+Database
+
+DATABASE_URL=postgresql://user:pass@localhost:5432/oneclicktobook
+
+Redis
+
+REDIS_URL=redis://localhost:6379
+
+Google OAuth
+
+GOOGLE_CLIENT_ID=...
+GOOGLE_CLIENT_SECRET=...
+GOOGLE_REDIRECT_URI=https://oneclicktobook.me/auth/google/callback
+
+Microsoft OAuth
+
+MS_CLIENT_ID=...
+MS_CLIENT_SECRET=...
+MS_TENANT_ID=common
+MS_REDIRECT_URI=https://oneclicktobook.me/auth/microsoft/callback
+
+Conferencing (placeholder)
+
+VIDEO_PROVIDER=meet # meet|teams|zoom|none
+
+
+---
+
+## 🔑 OAuth Scopes
+
+**Google (minimum needed):**
+- `https://www.googleapis.com/auth/calendar.readonly`
+- `https://www.googleapis.com/auth/calendar.events`
+
+**Microsoft Graph:**
+- `Calendars.Read`
+- `Calendars.Read.Shared`
+- `Calendars.ReadWrite`
+
+---
+
+## 🗄 Database (Prisma)
+
+Tables:
+- `User` — organizer or invitee
+- `Link` — meeting template & settings
+- `Booking` — confirmed meetings
+- `Token` — encrypted OAuth tokens
+- `AvailabilityCache` — short-lived cache
+
+Run:
+```bash
+pnpm i
+pnpm -C apps/api prisma:generate
+pnpm -C apps/api prisma:migrate
+
+🏃 Dev Run
+
+API:
+
+pnpm -C apps/api dev
+
+
+Web:
+
+pnpm -C apps/web dev
+
+📡 Core Endpoints
+POST /links           # create a booking link
+POST /availability    # get overlapping slots
+POST /book            # confirm a booking
+POST /reschedule      # change a booking
+POST /webhooks/google
+POST /webhooks/microsoft
+
+🔒 Security & Privacy
+
+Only busy intervals are stored — no event titles/details
+
+Tokens encrypted at rest
+
+JWT link tokens short-lived & signed
+
+Webhooks validated and idempotent
+
+📌 Notes
+
+Apple/iCloud users can paste their private iCal URL
+
+Video conferencing integration is pluggable
+
+📜 License
+
+MIT
+
+
+---
+
+Do you want me to go ahead and prepare **File 2** (`apps/api/src/index.ts`) so the repo is immediately runnable? That’s where the Express server and routes will be wired up.
