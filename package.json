@@ -1,0 +1,19 @@
+{
+  "name": "oneclicktobook",
+  "private": true,
+  "packageManager": "pnpm@9.7.0",
+  "devDependencies": {
+    "concurrently": "^9.1.2"
+  },
+  "scripts": {
+    "dev:api": "pnpm -C apps/api dev",
+    "dev:web": "pnpm -C apps/web dev",
+    "dev": "concurrently -k \"PORT=4001 pnpm -C apps/api dev\" \"pnpm -C apps/web dev\"",
+    "build": "pnpm -C apps/api build && pnpm -C apps/web build",
+    "build:api": "pnpm -C apps/api build",
+    "build:web": "pnpm -C apps/web build",
+    "start": "pnpm -C apps/api start"
+  }
+}
+
+
